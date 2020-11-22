@@ -11,5 +11,10 @@ def main():
     pass
 
 
+def get_page():
+    page = requests.get('https://dev.to/t/react')
+    return BeautifulSoup(page.content, 'html.parser')
+
+
 if __name__ == '__main__':
     main()
