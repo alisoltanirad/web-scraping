@@ -8,15 +8,27 @@ from bs4 import BeautifulSoup
 
 
 def main():
-    pass
+    show_post_titles()
+
+
+def show_post_titles():
+    posts = get_posts()
+    for post in posts:
+        print(post['title'])
 
 
 def get_posts():
-    post_links = {}
-    post_list = get_page().find_all(class_='crayons-story__hidden-navigation-link')
-    for post in post_list:
-        post_links[post.text] = post.get('href')
-    return post_links
+    posts = []
+    post_elements = get_page().find_all(
+        class_='crayons-story__hidden-navigation-link'
+    )
+    for post_element in post_elements:
+        post = {
+            'title': post_element.text,
+            'link': post_element.get('href'),
+        }
+        posts.append(post)
+    return posts
 
 
 def get_page():
