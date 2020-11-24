@@ -2,12 +2,14 @@
 # Data Source: https://dev.to
 # Dependencies: BeautifulSoup
 import requests
+from selenium import webdriver
 from bs4 import BeautifulSoup
 
 class DevBlog():
     url = 'https://dev.to'
 
     def __init__(self):
+        self.driver = webdriver.Firefox()
         self._page = BeautifulSoup(
             requests.get('https://dev.to').content, 'html.parser'
         )
