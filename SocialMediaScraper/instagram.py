@@ -16,6 +16,7 @@ class InstagramUser():
             requests.get(self._url).content, 'html.parser'
         )
         self._profile = self._get_profile_data()
+        self._edges = self._profile['edge_felix_video_timeline']['edges']
         self.data = {
             'Name': self._profile['full_name'],
             'Username': self._username,
@@ -45,6 +46,8 @@ def main():
     user = InstagramUser('coder24.7')
     for key, value in user.data.items():
         print('{key:>25}:  {value}'.format(key=key, value=value))
+
+    print(user._edges)
 
 
 if __name__ == '__main__':
