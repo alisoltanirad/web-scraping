@@ -16,7 +16,10 @@ class InstagramUser():
             requests.get(self._url).content, 'html.parser'
         )
         self._profile = self._get_profile_data()
-        self.data = {
+        self._posts = self._profile['edge_owner_to_timeline_media']['edges']
+
+    def get_info(self):
+        user_information = {
             'Name': self._profile['full_name'],
             'Username': self._username,
             'Page-URL': self._url,
@@ -31,8 +34,20 @@ class InstagramUser():
             'Page-Category': self._profile['category_enum'],
             'Is-Joined-Recently': self._profile['is_joined_recently'],
         }
+        return user_information
 
-        self._posts = self._profile['edge_owner_to_timeline_media']['edges']
+    def get_recent_posts_info(self):
+        recent_posts_info = []
+        for post in self._posts:
+            post_data = post['node']
+            post_info = {
+                'Display-URL': post_data['display_url'],
+                'Is-Video': post_data['is_video'],
+                'Likes': post_data['edge_liked_by']['count'],
+                'Comments': post_data['edge_media_to_comment']['count'],
+            }
+            recent_posts_info.append(post_info)
+        return recent_posts_info
 
     def _get_profile_data(self):
         shared_data = self._page.find(
@@ -45,7 +60,7 @@ class InstagramUser():
 
 def main():
     user = InstagramUser('highcod3r')
-    for key, value in user.data.items():
+    for key, value in user.get_info().items():
         print('{key:>25}:  {value}'.format(key=key, value=value))
 
 
