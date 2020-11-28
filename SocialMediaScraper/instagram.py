@@ -16,7 +16,6 @@ class InstagramUser():
             requests.get(self._url).content, 'html.parser'
         )
         self._profile = self._get_profile_data()
-        self._edges = self._profile['edge_felix_video_timeline']['edges']
         self.data = {
             'Name': self._profile['full_name'],
             'Username': self._username,
@@ -33,6 +32,8 @@ class InstagramUser():
             'Is-Joined-Recently': self._profile['is_joined_recently'],
         }
 
+        self._posts = self._profile['edge_owner_to_timeline_media']['edges']
+
     def _get_profile_data(self):
         shared_data = self._page.find(
             'script', text=re.compile('window\._sharedData')
@@ -43,11 +44,9 @@ class InstagramUser():
 
 
 def main():
-    user = InstagramUser('coder24.7')
+    user = InstagramUser('highcod3r')
     for key, value in user.data.items():
         print('{key:>25}:  {value}'.format(key=key, value=value))
-
-    print(user._edges)
 
 
 if __name__ == '__main__':
