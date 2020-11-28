@@ -49,6 +49,16 @@ class InstagramUser():
             recent_posts_info.append(post_info)
         return recent_posts_info
 
+    def get_engagement_rate(self):
+        interactions_sum = 0
+        for post in self._posts:
+            interactions_sum += post['node']['edge_liked_by']['count'] + \
+                                post['node']['edge_media_to_comment']['count']
+        engagement_rate = interactions_sum / \
+                          (self._profile['edge_followed_by']['count'] *
+                           len(self._posts))
+        return engagement_rate
+
     def _get_profile_data(self):
         shared_data = self._page.find(
             'script', text=re.compile('window\._sharedData')
@@ -57,12 +67,11 @@ class InstagramUser():
         return json.loads(shared_data)['entry_data']['ProfilePage'][0]['graphql']['user']
 
 
-
 def main():
     user = InstagramUser('highcod3r')
     for key, value in user.get_info().items():
         print('{key:>25}:  {value}'.format(key=key, value=value))
-
+    
 
 if __name__ == '__main__':
     main()
