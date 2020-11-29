@@ -9,17 +9,12 @@ class DevBlog():
     start_url = 'https://dev.to'
 
     def __init__(self):
-        self.driver = webdriver.Firefox()
+        self._driver = webdriver.Firefox()
         self._get_page_source()
         self._page = BeautifulSoup(
-            self.driver.page_source, 'lxml'
+            self._driver.page_source, 'lxml'
         )
         self.posts = self._get_posts()
-
-
-    def post_titles(self):
-        for post in self.posts:
-            yield (post['title'])
 
 
     def _get_posts(self):
@@ -29,31 +24,31 @@ class DevBlog():
         )
         for post_element in post_elements:
             post = {
-                'title': post_element.text,
-                'link': post_element.get('href'),
+                'Title': post_element.text,
+                'URL': self.start_url + post_element.get('href'),
             }
             posts.append(post)
         return posts
 
 
     def _get_page_source(self):
-        self.driver.get(self.start_url)
+        self._driver.get(self.start_url)
 
         SCROLL_PAUSE_TIME = 1
-        MAX_WAITING_TIME = 60
+        MAX_WAITING_TIME = 2
         waiting_time = 0
-        last_height = self.driver.execute_script(
+        last_height = self._driver.execute_script(
             'return document.body.scrollHeight'
         )
 
         while True:
-            self.driver.execute_script(
+            self._driver.execute_script(
                 'window.scrollTo(0, document.body.scrollHeight);'
             )
             time.sleep(SCROLL_PAUSE_TIME)
             waiting_time += SCROLL_PAUSE_TIME
 
-            current_height = self.driver.execute_script(
+            current_height = self._driver.execute_script(
                 'return document.body.scrollHeight'
             )
 
@@ -67,11 +62,14 @@ class DevBlog():
 def main():
     dev = DevBlog()
 
-    for title in dev.post_titles():
-        print(title)
+    for post in dev.posts:
+        print('\t Title: ', post['Title'])
+        print('\t URL: ', post['URL'])
+        print()
+
+    #print(dev.posts[-1])
 
     print(len(dev.posts))
-
 
 
 if __name__ == '__main__':
