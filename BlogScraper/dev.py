@@ -1,17 +1,18 @@
 # https://github.com/alisoltanirad/Web-Scraping.git
 # Data Source: https://dev.to
-# Dependencies: BeautifulSoup
-import requests
+# Dependencies: Selenium, BeautifulSoup
+import time
 from selenium import webdriver
 from bs4 import BeautifulSoup
 
 class DevBlog():
-    url = 'https://dev.to'
+    start_url = 'https://dev.to'
 
     def __init__(self):
         self.driver = webdriver.Firefox()
+        self._get_page_source()
         self._page = BeautifulSoup(
-            requests.get('https://dev.to').content, 'html.parser'
+            self.driver.page_source, 'lxml'
         )
         self.posts = self._get_posts()
 
@@ -35,10 +36,42 @@ class DevBlog():
         return posts
 
 
+    def _get_page_source(self):
+        self.driver.get(self.start_url)
+
+        SCROLL_PAUSE_TIME = 1
+        MAX_WAITING_TIME = 60
+        waiting_time = 0
+        last_height = self.driver.execute_script(
+            'return document.body.scrollHeight'
+        )
+
+        while True:
+            self.driver.execute_script(
+                'window.scrollTo(0, document.body.scrollHeight);'
+            )
+            time.sleep(SCROLL_PAUSE_TIME)
+            waiting_time += SCROLL_PAUSE_TIME
+
+            current_height = self.driver.execute_script(
+                'return document.body.scrollHeight'
+            )
+
+            if current_height == last_height:
+                break
+            elif waiting_time >= MAX_WAITING_TIME:
+                break
+            last_height = current_height
+
 
 def main():
-    for title in DevBlog().post_titles():
+    dev = DevBlog()
+
+    for title in dev.post_titles():
         print(title)
+
+    print(len(dev.posts))
+
 
 
 if __name__ == '__main__':
