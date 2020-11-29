@@ -2,6 +2,7 @@
 # Data Source: https://dev.to
 # Dependencies: Selenium, BeautifulSoup
 import time
+import re
 from selenium import webdriver
 from bs4 import BeautifulSoup
 
@@ -24,7 +25,7 @@ class DevBlog():
         )
         for post_element in post_elements:
             post = {
-                'Title': post_element.text,
+                'Title': re.sub(r'[\n]', '', post_element.text).strip(),
                 'URL': self.start_url + post_element.get('href'),
             }
             posts.append(post)
@@ -66,10 +67,6 @@ def main():
         print('\t Title: ', post['Title'])
         print('\t URL: ', post['URL'])
         print()
-
-    #print(dev.posts[-1])
-
-    print(len(dev.posts))
 
 
 if __name__ == '__main__':
