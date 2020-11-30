@@ -41,9 +41,11 @@ class DevBlog():
         )
         for tag_element in tag_elements:
             tag = {
-                'Name': tag_element.find('a').text,
+                'Name': re.sub(r'#', '', tag_element.find('a').text.strip()),
                 'URL': self.start_url + tag_element.find('a').get('href'),
-                'Posts': tag_element.find(class_='mb-3 fs-s color-base-60').text,
+                'Posts': tag_element.find(
+                    class_='mb-3 fs-s color-base-60'
+                ).text.strip().split()[0],
             }
             tags.append(tag)
         return tags
@@ -84,6 +86,7 @@ def main():
         print('\t URL: ', tag['URL'])
         print('\t Posts: ', tag['Posts'])
         print()
+
 
 
 if __name__ == '__main__':
