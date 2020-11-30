@@ -3,6 +3,7 @@
 # Dependencies: Selenium, BeautifulSoup
 import time
 import re
+import requests
 from selenium import webdriver
 from bs4 import BeautifulSoup
 
@@ -10,13 +11,13 @@ class DevBlog():
     start_url = 'https://dev.to'
 
     def __init__(self):
-        self._driver = webdriver.Firefox()
-        self._get_page_source()
-        self._page = BeautifulSoup(
-            self._driver.page_source, 'lxml'
-        )
-        self.posts = self._get_posts()
-
+        #self._driver = webdriver.Firefox()
+        #self._get_page_source()
+        #self._page = BeautifulSoup(
+        #    self._driver.page_source, 'lxml'
+        #)
+        #self.posts = self._get_posts()
+        self.top_tags = self._get_top_tags()
 
     def _get_posts(self):
         posts = []
@@ -31,12 +32,27 @@ class DevBlog():
             posts.append(post)
         return posts
 
+    def _get_top_tags(self):
+        url = self.start_url + '/tags'
+        page = BeautifulSoup(requests.get(url).content, 'html.parser')
+        tags = []
+        tag_elements = page.find_all(
+            class_='tag-card crayons-card branded-4 p-4 m:p-6 m:pt-4 flex flex-col relative'
+        )
+        for tag_element in tag_elements:
+            tag = {
+                'Name': tag_element.find('a').text,
+                'URL': self.start_url + tag_element.find('a').get('href'),
+                'Posts': tag_element.find(class_='mb-3 fs-s color-base-60').text,
+            }
+            tags.append(tag)
+        return tags
 
     def _get_page_source(self):
         self._driver.get(self.start_url)
 
         SCROLL_PAUSE_TIME = 1
-        MAX_WAITING_TIME = 2
+        MAX_WAITING_TIME = 60
         waiting_time = 0
         last_height = self._driver.execute_script(
             'return document.body.scrollHeight'
@@ -63,9 +79,10 @@ class DevBlog():
 def main():
     dev = DevBlog()
 
-    for post in dev.posts:
-        print('\t Title: ', post['Title'])
-        print('\t URL: ', post['URL'])
+    for tag in dev.top_tags:
+        print('\t Name: ', tag['Name'])
+        print('\t URL: ', tag['URL'])
+        print('\t Posts: ', tag['Posts'])
         print()
 
 
