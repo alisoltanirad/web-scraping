@@ -11,12 +11,10 @@ class DevBlog():
     start_url = 'https://dev.to'
 
     def __init__(self):
-        #self._driver = webdriver.Firefox()
-        #self._get_page_source()
-        #self._page = BeautifulSoup(
-        #    self._driver.page_source, 'lxml'
-        #)
-        #self.posts = self._get_posts()
+        self._driver = webdriver.Firefox()
+        self._get_page_source()
+        self._page = BeautifulSoup(self._driver.page_source, 'lxml')
+        self.posts = self._get_posts()
         self.top_tags = self._get_top_tags()
 
     def _get_posts(self):
@@ -26,7 +24,7 @@ class DevBlog():
         )
         for post_element in post_elements:
             post = {
-                'Title': re.sub(r'[\n]', '', post_element.text).strip(),
+                'Title': post_element.text.strip(),
                 'URL': self.start_url + post_element.get('href'),
             }
             posts.append(post)
@@ -36,16 +34,12 @@ class DevBlog():
         url = self.start_url + '/tags'
         page = BeautifulSoup(requests.get(url).content, 'html.parser')
         tags = []
-        tag_elements = page.find_all(
-            class_='tag-card crayons-card branded-4 p-4 m:p-6 m:pt-4 flex flex-col relative'
-        )
+        tag_elements = page.find_all(class_='tag-card')
         for tag_element in tag_elements:
             tag = {
                 'Name': re.sub(r'#', '', tag_element.find('a').text.strip()),
                 'URL': self.start_url + tag_element.find('a').get('href'),
-                'Posts': tag_element.find(
-                    class_='mb-3 fs-s color-base-60'
-                ).text.strip().split()[0],
+                'Posts': tag_element.find(class_='mb-3').text.strip().split()[0],
             }
             tags.append(tag)
         return tags
@@ -54,7 +48,7 @@ class DevBlog():
         self._driver.get(self.start_url)
 
         SCROLL_PAUSE_TIME = 1
-        MAX_WAITING_TIME = 60
+        MAX_WAITING_TIME = 2
         waiting_time = 0
         last_height = self._driver.execute_script(
             'return document.body.scrollHeight'
@@ -81,12 +75,10 @@ class DevBlog():
 def main():
     dev = DevBlog()
 
-    for tag in dev.top_tags:
-        print('\t Name: ', tag['Name'])
-        print('\t URL: ', tag['URL'])
-        print('\t Posts: ', tag['Posts'])
+    for post in dev.posts:
+        print('\t Title: ', post['Title'])
+        print('\t URL: ', post['URL'])
         print()
-
 
 
 if __name__ == '__main__':
