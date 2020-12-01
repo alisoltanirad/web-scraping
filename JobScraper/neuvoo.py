@@ -7,6 +7,15 @@ from decimal import Decimal
 from bs4 import BeautifulSoup
 
 
+class Neuvoo:
+    start_url = 'https://neuvoo.ca'
+
+    def __init__(self):
+        self._page = BeautifulSoup(
+            requests.get('https://neuvoo.ca/salary/'), 'html.parser'
+        )
+
+
 def main():
     show_job_salaries(get_job_salaries())
 
