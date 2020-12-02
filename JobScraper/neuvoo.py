@@ -11,10 +11,7 @@ class Neuvoo:
     start_url = 'https://neuvoo.ca/'
 
     def __init__(self):
-        salary_url = ''.join([self.start_url, 'salary/'])
-        self._salary_page = BeautifulSoup(
-            requests.get(salary_url).content, 'html.parser'
-        )
+        self.job_salaries = self._get_job_salaries()
 
     def show_job_salaries(self):
         salaries = self._get_job_salaries()
@@ -22,6 +19,11 @@ class Neuvoo:
             yield job, salaries[job]
 
     def _get_job_salaries(self):
+        url = ''.join([self.start_url, 'salary/'])
+        self._salary_page = BeautifulSoup(
+            requests.get(url).content, 'html.parser'
+        )
+
         job_elements = self._salary_page.find_all(class_='card--infoList--li')
         salaries = {}
         for element in job_elements:
