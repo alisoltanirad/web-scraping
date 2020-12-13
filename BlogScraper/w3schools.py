@@ -11,19 +11,22 @@ class W3Schools:
         self._page = BeautifulSoup(
             requests.get(self.start_url).content, 'html.parser'
         )
-        self.tutorials = self._get_tutorials()
+        self.tutorials = self._get_nav_links('tutorials')
+        self.references = self._get_nav_links('references')
+        self.examples = self._get_nav_links('examples')
+        self.exercises = self._get_nav_links('exercises')
 
-    def _get_tutorials(self):
-        tutorials = []
-        nav_tutorials = self._page.find(id='nav_tutorials')
-        tutorial_elements = nav_tutorials.find_all('a')
-        for element in tutorial_elements:
-            tutorial = {
+    def _get_nav_links(self, category):
+        links = []
+        nav = self._page.find(id=('nav_' + category))
+        elements = nav.find_all('a')
+        for element in elements:
+            link = {
                 'Title': element.text.strip(),
                 'URL': self.start_url + element.get('href')
             }
-            tutorials.append(tutorial)
-        return tutorials
+            links.append(link)
+        return links
 
 
 if __name__ == '__main__':
