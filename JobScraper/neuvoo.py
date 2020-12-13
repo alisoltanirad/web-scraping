@@ -13,6 +13,7 @@ class Neuvoo:
     def __init__(self):
         self.job_salaries = self._get_job_salaries()
 
+
     def show_job_salaries(self):
         salaries = self._get_job_salaries()
         for job in sorted(salaries, key=salaries.get, reverse=True):
