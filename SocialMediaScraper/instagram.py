@@ -1,4 +1,3 @@
-# https://github.com/alisoltanirad/Web-Scraping.git
 # Data Source: https://instagram.com
 # Dependencies: BeautifulSoup
 import requests
@@ -6,7 +5,8 @@ import re
 import json
 from bs4 import BeautifulSoup
 
-class InstagramUser():
+
+class InstagramUser:
     start_url = 'https://instagram.com/'
 
     def __init__(self, username):
@@ -65,13 +65,9 @@ class InstagramUser():
         ).string.partition('=')[-1].strip(' ;')
 
         return json.loads(shared_data)['entry_data']['ProfilePage'][0]['graphql']['user']
-
-
-def main():
-    user = InstagramUser('highcod3r')
-    for key, value in user.get_info().items():
-        print('{key:>25}:  {value}'.format(key=key, value=value))
     
 
 if __name__ == '__main__':
-    main()
+    user = InstagramUser('highcod3r')
+    for key, value in user.get_info().items():
+        print('{key:>25}:  {value}'.format(key=key, value=value))

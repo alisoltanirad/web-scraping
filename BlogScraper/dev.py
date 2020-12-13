@@ -1,4 +1,3 @@
-# https://github.com/alisoltanirad/Web-Scraping.git
 # Data Source: https://dev.to
 # Dependencies: Selenium, BeautifulSoup
 import time
@@ -7,7 +6,8 @@ import requests
 from selenium import webdriver
 from bs4 import BeautifulSoup
 
-class DevBlog():
+
+class DevBlog:
     start_url = 'https://dev.to'
 
     def __init__(self):
@@ -72,14 +72,10 @@ class DevBlog():
             last_height = current_height
 
 
-def main():
+if __name__ == '__main__':
     dev = DevBlog()
 
     for post in dev.posts:
         print('\t Title: ', post['Title'])
         print('\t URL: ', post['URL'])
         print()
-
-
-if __name__ == '__main__':
-    main()

@@ -1,4 +1,3 @@
-# https://github.com/alisoltanirad/Web-Scraping.git
 # Data Source: https://neuvoo.ca
 # Dependencies: BeautifulSoup
 import requests
@@ -42,11 +41,7 @@ class Neuvoo:
         return salaries
 
 
-def main():
+if __name__ == '__main__':
     neuvoo = Neuvoo()
     for title, salary in neuvoo.show_job_salaries():
         print('{job:>35}: {salary:>8,}'.format(job=title, salary=salary))
-
-
-if __name__ == '__main__':
-    main()
