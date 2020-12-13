@@ -10,10 +10,10 @@ class InstagramUser:
     start_url = 'https://instagram.com/'
 
     def __init__(self, username):
-        self._username = username
-        self._url = ''.join([self.start_url, self._username])
+        self.username = username
+        self.url = ''.join([self.start_url, self.username])
         self._page = BeautifulSoup(
-            requests.get(self._url).content, 'html.parser'
+            requests.get(self.url).content, 'html.parser'
         )
         self._profile = self._get_profile_data()
         self._posts = self._profile['edge_owner_to_timeline_media']['edges']
@@ -21,8 +21,8 @@ class InstagramUser:
     def get_info(self):
         user_information = {
             'Name': self._profile['full_name'],
-            'Username': self._username,
-            'Page-URL': self._url,
+            'Username': self.username,
+            'Page-URL': self.url,
             'Profile-Picture-URL': self._profile['profile_pic_url_hd'],
             'Biography': self._profile['biography'],
             'Website': self._profile['external_url'],
@@ -65,6 +65,17 @@ class InstagramUser:
         ).string.partition('=')[-1].strip(' ;')
 
         return json.loads(shared_data)['entry_data']['ProfilePage'][0]['graphql']['user']
+
+
+class InstagramTag:
+    start_url = 'https://instagram.com/explore/tags/'
+
+    def __init__(self, name):
+        self.name = name
+        self.url = ''.join([self.start_url, self.name])
+        self._page = BeautifulSoup(
+            requests.get(self.url).content, 'html.parser'
+        )
     
 
 if __name__ == '__main__':
