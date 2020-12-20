@@ -2,3 +2,5 @@
 .DS_Store
 BlogScraper/geckodriver.log
 ShopScraper/__pycache__/
+scrapers/__pycache__
+scrapers/geckodriver.log
