@@ -56,7 +56,7 @@ class GithubUser:
                     'div', class_='js-yearly-contributions'
                 ).find('h2').text.strip()
             ),
-            
+
             'Last-Month': ', '.join(timeline_items)
         }
 
@@ -109,7 +109,6 @@ class GithubUser:
         return BeautifulSoup(
             requests.get(url).content, 'html.parser'
         )
-
 
 
 if __name__ == '__main__':
