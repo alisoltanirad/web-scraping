@@ -104,6 +104,36 @@ class GithubUser:
 
         return repos
 
+    def stars_info(self):
+        page = self._get_tab('stars')
+
+        stars = list()
+
+        for repository in page.find_all('div', class_='py-4'):
+
+            link = repository.find('a')
+            text = link.text.split()
+            owner, title = text[0], text[-1]
+
+            stars.append({
+                'Category': 'Repository',
+                'Title': title,
+                'Owner': owner,
+                'URL': ''.join([self.start_url, link.get('href')[1:]]),
+            })
+
+        for topic in page.find_all('article', class_='my-3'):
+
+            link = topic.find('a')
+
+            stars.append({
+                'Category': 'Topic',
+                'Title': link.find('h1').text,
+                'URL': ''.join([self.start_url, link.get('href')[1:]]),
+            })
+
+        return stars
+
     def _get_tab(self, name):
         url = ''.join([self.url, '?tab=', name])
         return BeautifulSoup(
@@ -125,5 +155,11 @@ if __name__ == '__main__':
     print('\n\tRepositories:\n')
     for repo in user.repos_info():
         for key, value in repo.items():
+            print('{key}: {value}'.format(key=key, value=value))
+        print()
+
+    print('\n\tStars:\n')
+    for star in user.stars_info():
+        for key, value in star.items():
             print('{key}: {value}'.format(key=key, value=value))
         print()
