@@ -14,8 +14,12 @@ class GithubUser:
         self._page = BeautifulSoup(
             requests.get(self.url).content, 'html.parser'
         )
+        self.profile_info = self.get_profile_info()
+        self.activity_info = self.get_activity_info()
+        self.repos_info = self.get_repos_info()
+        self.stars_info = self.get_stars_info()
 
-    def profile_info(self):
+    def get_profile_info(self):
         return {
 
             'Username': self.username,
@@ -40,13 +44,15 @@ class GithubUser:
 
         }
 
-    def activity_info(self):
-        timeline_items = [
-            re.sub(r'\s+|\n', ' ', item.find('summary').text.strip())
-            for item in self._page.find_all(
+    def get_activity_info(self):
+        last_month = re.sub(
+            r'\s+|\n',
+            ' ',
+            self._page.find(
                 'div', class_='TimelineItem-body'
-            )
-        ]
+            ).find('summary').text.strip()
+        )
+
 
         return {
             'Last-Year': re.sub(
@@ -57,10 +63,10 @@ class GithubUser:
                 ).find('h2').text.strip()
             ),
 
-            'Last-Month': ', '.join(timeline_items)
+            'Last-Month': last_month
         }
 
-    def repos_info(self):
+    def get_repos_info(self):
         page = self._get_tab('repositories')
 
         repos = list()
@@ -104,7 +110,7 @@ class GithubUser:
 
         return repos
 
-    def stars_info(self):
+    def get_stars_info(self):
         page = self._get_tab('stars')
 
         stars = list()
@@ -145,21 +151,21 @@ if __name__ == '__main__':
     user = GithubUser('alisoltanirad')
 
     print('\n\tProfile:\n')
-    for key, value in user.profile_info().items():
+    for key, value in user.profile_info.items():
         print('{key}: {value}'.format(key=key, value=value))
 
     print('\n\tActivity:\n')
-    for key, value in user.activity_info().items():
+    for key, value in user.activity_info.items():
         print('{key}: {value}'.format(key=key, value=value))
 
     print('\n\tRepositories:\n')
-    for repo in user.repos_info():
+    for repo in user.repos_info:
         for key, value in repo.items():
             print('{key}: {value}'.format(key=key, value=value))
         print()
 
     print('\n\tStars:\n')
-    for star in user.stars_info():
+    for star in user.stars_info:
         for key, value in star.items():
             print('{key}: {value}'.format(key=key, value=value))
         print()
